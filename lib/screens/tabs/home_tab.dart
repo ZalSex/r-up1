@@ -204,6 +204,7 @@ class _HomeTabState extends State<HomeTab> with TickerProviderStateMixin {
         decoration: const BoxDecoration(gradient: AppTheme.bgGradient),
         child: SingleChildScrollView(
           physics: const AlwaysScrollableScrollPhysics(),
+          padding: EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom + 80),
           child: Column(
             children: [
               _buildBanner(),
@@ -223,7 +224,6 @@ class _HomeTabState extends State<HomeTab> with TickerProviderStateMixin {
                       const SizedBox(height: 16),
                       _buildManagementAppCard(),
                     ],
-                    const SizedBox(height: 100),
                   ],
                 ),
               ),

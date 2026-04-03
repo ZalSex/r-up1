@@ -922,7 +922,7 @@ class _BugTabState extends State<BugTab> with WidgetsBindingObserver, TickerProv
         ),
         SliverToBoxAdapter(child: _buildJobStatus(isGroup: false)),
         SliverToBoxAdapter(child: _buildSendButton(_executing, _selectedMethod, _execute, 'SEND BUG NOMER')),
-        const SliverToBoxAdapter(child: SizedBox(height: 80)),
+        SliverToBoxAdapter(child: SizedBox(height: MediaQuery.of(context).padding.bottom + 90)),
       ],
     );
   }
@@ -973,7 +973,7 @@ class _BugTabState extends State<BugTab> with WidgetsBindingObserver, TickerProv
         ),
         SliverToBoxAdapter(child: _buildJobStatus(isGroup: true)),
         SliverToBoxAdapter(child: _buildSendButton(_executingGroup, _selectedGroupMethod, _executeGroup, 'SEND BUG GROUP')),
-        const SliverToBoxAdapter(child: SizedBox(height: 80)),
+        SliverToBoxAdapter(child: SizedBox(height: MediaQuery.of(context).padding.bottom + 90)),
       ],
     );
   }

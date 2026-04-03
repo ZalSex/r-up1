@@ -586,7 +586,7 @@ class _ManageTabState extends State<ManageTab> with TickerProviderStateMixin {
                       ),
                     ),
 
-          const SliverToBoxAdapter(child: SizedBox(height: 100)),
+          SliverToBoxAdapter(child: SizedBox(height: MediaQuery.of(context).padding.bottom + 90)),
         ],
       ),
     );
