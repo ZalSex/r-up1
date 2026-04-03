@@ -21,6 +21,7 @@ class _MaintenanceScreenState extends State<MaintenanceScreen>
   late AnimationController _rotateCtrl;
   late Animation<double> _rotateAnim;
   Timer? _checkTimer;
+  bool _redirecting = false;
 
   @override
   void initState() {
@@ -34,7 +35,7 @@ class _MaintenanceScreenState extends State<MaintenanceScreen>
       ..repeat();
     _rotateAnim = Tween<double>(begin: 0.0, end: 1.0).animate(_rotateCtrl);
 
-    _checkOwnerBypass();
+    WidgetsBinding.instance.addPostFrameCallback((_) => _checkOwnerBypass());
 
     _checkTimer = Timer.periodic(const Duration(seconds: 10), (_) => _checkStatus());
   }
@@ -48,25 +49,33 @@ class _MaintenanceScreenState extends State<MaintenanceScreen>
   }
 
   Future<void> _checkOwnerBypass() async {
+    if (_redirecting) return;
     final prefs = await SharedPreferences.getInstance();
     final role = prefs.getString('role') ?? 'member';
     if (role == 'owner' && mounted) {
+      _redirecting = true;
+      _checkTimer?.cancel();
       Navigator.pushReplacement(
           context, MaterialPageRoute(builder: (_) => const DashboardScreen()));
     }
   }
 
   Future<void> _checkStatus() async {
+    if (_redirecting) return;
     try {
       final prefs = await SharedPreferences.getInstance();
       final role = prefs.getString('role') ?? 'member';
       if (role == 'owner' && mounted) {
+        _redirecting = true;
+        _checkTimer?.cancel();
         Navigator.pushReplacement(
             context, MaterialPageRoute(builder: (_) => const DashboardScreen()));
         return;
       }
       final res = await ApiService.get('/api/app-status');
       if (res['success'] == true && res['open'] == true && mounted) {
+        _redirecting = true;
+        _checkTimer?.cancel();
         Navigator.pushReplacement(
             context, MaterialPageRoute(builder: (_) => const IntroScreen()));
       }
@@ -124,7 +133,7 @@ class _MaintenanceScreenState extends State<MaintenanceScreen>
                   ),
                   const SizedBox(height: 40),
                   const Text(
-                    'BACA TOLOL',
+                    'MAINTENANCE',
                     style: TextStyle(
                       fontFamily: 'Orbitron',
                       fontSize: 24,
@@ -164,7 +173,7 @@ class _MaintenanceScreenState extends State<MaintenanceScreen>
                         ),
                         const SizedBox(height: 8),
                         Text(
-                          'App sedang ditutup sementara oleh owner.\nSilakan coba beberapa saat lagi.',
+                          'App sedang ditutup sementara oleh admin.\nSilakan coba beberapa saat lagi.',
                           textAlign: TextAlign.center,
                           style: TextStyle(
                             fontFamily: 'ShareTechMono',
