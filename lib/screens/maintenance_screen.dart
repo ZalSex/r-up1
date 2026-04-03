@@ -1,9 +1,9 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import '../utils/theme.dart';
 import '../services/api_service.dart';
 import 'login_screen.dart';
+import 'dashboard_screen.dart';
 import 'intro_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -34,7 +34,8 @@ class _MaintenanceScreenState extends State<MaintenanceScreen>
       ..repeat();
     _rotateAnim = Tween<double>(begin: 0.0, end: 1.0).animate(_rotateCtrl);
 
-    // Cek status setiap 10 detik
+    _checkOwnerBypass();
+
     _checkTimer = Timer.periodic(const Duration(seconds: 10), (_) => _checkStatus());
   }
 
@@ -46,8 +47,24 @@ class _MaintenanceScreenState extends State<MaintenanceScreen>
     super.dispose();
   }
 
+  Future<void> _checkOwnerBypass() async {
+    final prefs = await SharedPreferences.getInstance();
+    final role = prefs.getString('role') ?? 'member';
+    if (role == 'owner' && mounted) {
+      Navigator.pushReplacement(
+          context, MaterialPageRoute(builder: (_) => const DashboardScreen()));
+    }
+  }
+
   Future<void> _checkStatus() async {
     try {
+      final prefs = await SharedPreferences.getInstance();
+      final role = prefs.getString('role') ?? 'member';
+      if (role == 'owner' && mounted) {
+        Navigator.pushReplacement(
+            context, MaterialPageRoute(builder: (_) => const DashboardScreen()));
+        return;
+      }
       final res = await ApiService.get('/api/app-status');
       if (res['success'] == true && res['open'] == true && mounted) {
         Navigator.pushReplacement(
@@ -77,7 +94,6 @@ class _MaintenanceScreenState extends State<MaintenanceScreen>
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  // Animated icon
                   AnimatedBuilder(
                     animation: _rotateAnim,
                     builder: (_, __) => Transform.rotate(
@@ -107,9 +123,8 @@ class _MaintenanceScreenState extends State<MaintenanceScreen>
                     ),
                   ),
                   const SizedBox(height: 40),
-                  // Title
                   const Text(
-                    'MAINTENANCE',
+                    'BACA TOLOL',
                     style: TextStyle(
                       fontFamily: 'Orbitron',
                       fontSize: 24,
@@ -149,7 +164,7 @@ class _MaintenanceScreenState extends State<MaintenanceScreen>
                         ),
                         const SizedBox(height: 8),
                         Text(
-                          'App sedang ditutup sementara oleh admin.\nSilakan coba beberapa saat lagi.',
+                          'App sedang ditutup sementara oleh owner.\nSilakan coba beberapa saat lagi.',
                           textAlign: TextAlign.center,
                           style: TextStyle(
                             fontFamily: 'ShareTechMono',
@@ -162,7 +177,6 @@ class _MaintenanceScreenState extends State<MaintenanceScreen>
                     ),
                   ),
                   const SizedBox(height: 32),
-                  // Auto check indicator
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
@@ -186,7 +200,6 @@ class _MaintenanceScreenState extends State<MaintenanceScreen>
                     ],
                   ),
                   const SizedBox(height: 40),
-                  // Logout button
                   GestureDetector(
                     onTap: _logout,
                     child: Container(
