@@ -654,6 +654,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       ),
                       child: const Text(
                         'PEGASUS-X 2K26',
+                        textAlign: TextAlign.center,
+                        maxLines: 1,
                         style: TextStyle(
                           fontFamily: 'Orbitron',
                           fontSize: 14,
