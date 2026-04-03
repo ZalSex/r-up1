@@ -57,9 +57,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
   void initState() {
     super.initState();
     HeartbeatService.instance.start(onExpiredCallback: _handleExpired);
-    _loadUserInfo();
+    _loadUserInfo().then((_) {
+      if (mounted) _checkAppStatus();
+    });
     _checkUnread();
-    _checkAppStatus();
     Timer.periodic(const Duration(seconds: 10), (_) {
       if (mounted) _checkUnread();
     });
